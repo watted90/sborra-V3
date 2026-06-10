@@ -1,0 +1,16 @@
+node_modules/
+.env
+.env.local
+database.json
+lastfm_users.json
+temp/
+tmp/
+sborra/
+media/*
+*.log
+.DS_Store
+.vscode/
+*.swp
+*.swo
+*~
+.idea/
