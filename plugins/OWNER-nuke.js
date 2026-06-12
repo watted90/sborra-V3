@@ -38,9 +38,9 @@ https://chat.whatsapp.com/LunODDfHQeb5hW3QYF7Uy1`,
     }, { quoted: m })
 
 
-    const videoPath = path.join(process.cwd(), 'nuke.mp4')
+    const videoPath = path.join(process.cwd(), 'img', 'nuke.mp4')
     if (!fs.existsSync(videoPath)) {
-      return await conn.reply(m.chat, '❌ ERRORE: manca il file *nuke.mp4* nella root del bot.', m)
+      return await conn.reply(m.chat, '❌ ERRORE: manca il file *nuke.mp4* nella cartella img.', m)
     }
 
     await conn.sendMessage(m.chat, {

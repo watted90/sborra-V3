@@ -55,6 +55,7 @@ let handler = async (m, { conn, usedPrefix }) => {
     { buttonId: `${usedPrefix}menuaudio`, buttonText: { displayText: "🎵 𝐀𝐔𝐃𝐈𝐎" }, type: 1 },
     { buttonId: `${usedPrefix}owner`, buttonText: { displayText: "🔐 𝐎𝐖𝐍𝐄𝐑" }, type: 1 }, 
     { buttonId: `${usedPrefix}lastfm`, buttonText: { displayText: "🔊 𝐋𝐀𝐒𝐓.𝐅𝐌" }, type: 1 },
+    { buttonId: `${usedPrefix}moderatore`, buttonText: { displayText: "🛡️ 𝐌𝐎𝐃𝐄𝐑𝐀𝐓𝐎𝐑𝐈" }, type: 1 }
   ];
 
   await conn.sendMessage(m.chat, {

@@ -496,9 +496,11 @@ if (user.banned) {
             vocali: false, antiporno: false, antioneview: false,
             autolevelup: false, antivoip: false, rileva: false,
             modoadmin: false, antiLink: false, antiLink2: false,
-            reaction: false, antispam: false, expired: 0, users: {}, topUsers: {}
+            reaction: false, antispam: false, expired: 0, users: {}, topUsers: {},
+            moderators: []
         })
         if (!chat.topUsers) chat.topUsers = {}
+        if (!chat.moderators) chat.moderators = []
 
         let settings = global.db.data.settings[this.user.jid] || (global.db.data.settings[this.user.jid] = {
             autoread: false, jadibotmd: false, antiPrivate: true,
@@ -568,6 +570,11 @@ if (user.banned) {
 
         if (m.isGroup && !isGroupAdmin) {
             isGroupAdmin = await global.isGroupAdmin(this, m.chat, normalizedSender)
+        }
+
+        let isModerator = false
+        if (m.isGroup && chat.moderators && Array.isArray(chat.moderators)) {
+            isModerator = chat.moderators.includes(normalizedSender)
         }
 
         if (m.isGroup && chat.antimedia && !isAdmin && !isROwner && !isOwner) {
@@ -777,7 +784,8 @@ if (user.banned) {
                 if (plugin.premium && !isPrems) { fail('premium', m, this); continue }
                 if (plugin.group && !m.isGroup) { fail('group', m, this); continue }
                 if (plugin.botAdmin && !isBotAdmin) { fail('botAdmin', m, this); continue }
-                if (plugin.admin && !isAdmin) { fail('admin', m, this); continue }
+                if (plugin.admin && !isAdmin && !isModerator) { fail('admin', m, this); continue }
+                if (plugin.moderator && !isModerator && !isAdmin) { fail('moderator', m, this); continue }
                 if (plugin.private && m.isGroup) { fail('private', m, this); continue }
                 if (plugin.register && !user.registered) { fail('unreg', m, this); continue }
 
