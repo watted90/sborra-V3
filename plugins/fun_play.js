@@ -56,6 +56,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   let video = global.playChoice[m.sender]
   if (!video) return m.reply("❌ 𝐍𝐎𝐍 𝐂'𝐄̀ 𝐍𝐄𝐒𝐒𝐔𝐍𝐀 𝐂𝐀𝐍𝐙𝐎𝐍𝐄")
 
+  // AUDIO
   if (command === "play_audio") {
 
     await m.reply(`
@@ -68,6 +69,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     try {
       await execFilePromise('yt-dlp', [
+        '--cookies', 'cookies.txt',
+        '--extractor-args', 'youtube:player_client=android',
         '-x',
         '--audio-format', 'mp3',
         '-o', file,
@@ -110,6 +113,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     }
   }
 
+  // VIDEO
   if (command === "play_video") {
 
     if (video.seconds > 480)
@@ -125,6 +129,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
       await execPromise(
         `yt-dlp --no-playlist ` +
+        `--cookies cookies.txt ` +
+        `--extractor-args "youtube:player_client=android" ` +
         `-f "bestvideo[vcodec^=avc1][height<=480]+bestaudio[acodec^=mp4a]/best[vcodec^=avc1][height<=480]/best[height<=480]" ` +
         `--merge-output-format mp4 --ffmpeg-location /usr/bin/ffmpeg ` +
         `--no-part --retries 3 ` +
