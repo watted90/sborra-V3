@@ -68,11 +68,16 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     let file = `./tmp_${Date.now()}.mp3`
 
     try {
-      await execFilePromise('yt-dlp', [
+      await execFilePromise('/usr/local/bin/yt-dlp', [
         '--cookies', 'cookies.txt',
         '--extractor-args', 'youtube:player_client=android',
+        '--no-mtime',
+        '--ignore-errors',
+        '--no-warnings',
+        '--no-playlist',
         '-x',
         '--audio-format', 'mp3',
+        '--audio-quality', '0',
         '-o', file,
         video.url
       ])
@@ -128,9 +133,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     try {
 
       await execPromise(
-        `yt-dlp --no-playlist ` +
+        `/usr/local/bin/yt-dlp --no-playlist ` +
         `--cookies cookies.txt ` +
         `--extractor-args "youtube:player_client=android" ` +
+        `--no-mtime --ignore-errors --no-warnings ` +
         `-f "bestvideo[vcodec^=avc1][height<=480]+bestaudio[acodec^=mp4a]/best[vcodec^=avc1][height<=480]/best[height<=480]" ` +
         `--merge-output-format mp4 --ffmpeg-location /usr/bin/ffmpeg ` +
         `--no-part --retries 3 ` +
