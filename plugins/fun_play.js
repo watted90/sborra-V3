@@ -66,8 +66,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 `)
 
     let file = `./tmp_${Date.now()}.mp3`
+    let temp = `./tmp_${Date.now()}.m4a`
 
     try {
+      // Scarica SEMPRE in m4a (formato garantito)
       await execFilePromise('/usr/local/bin/yt-dlp', [
         '--cookies', 'cookies.txt',
         '--extractor-args', 'youtube:player_client=android',
@@ -75,12 +77,17 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         '--ignore-errors',
         '--no-warnings',
         '--no-playlist',
-        '-x',
-        '--audio-format', 'mp3',
-        '--audio-quality', '0',
-        '-o', file,
+        '-f', 'bestaudio[ext=m4a]/bestaudio',
+        '-o', temp,
         video.url
       ])
+
+      // Converti in mp3
+      await execPromise(
+        `/usr/bin/ffmpeg -y -i "${temp}" -vn -c:a libmp3lame -b:a 128k "${file}"`
+      )
+
+      fs.unlinkSync(temp)
 
       await conn.sendMessage(m.chat, {
         audio: fs.readFileSync(file),
@@ -111,9 +118,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       )
 
       delete global.playChoice[m.sender]
+
     } catch (e) {
       console.error('Play audio error:', e)
       if (fs.existsSync(file)) fs.unlinkSync(file)
+      if (fs.existsSync(temp)) fs.unlinkSync(temp)
       m.reply("❌ Errore nel download audio")
     }
   }
