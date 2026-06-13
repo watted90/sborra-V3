@@ -66,21 +66,41 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 `)
 
     let file = `./tmp_${Date.now()}.mp3`
-    let temp = `./tmp_${Date.now()}.m4a`
+    let temp = `./tmp_${Date.now()}.audio`
 
     try {
-      // Scarica SEMPRE in m4a (formato garantito)
-      await execFilePromise('/usr/local/bin/yt-dlp', [
-        '--cookies', 'cookies.txt',
-        '--extractor-args', 'youtube:player_client=android',
-        '--no-mtime',
-        '--ignore-errors',
-        '--no-warnings',
-        '--no-playlist',
-        '-f', 'bestaudio[ext=m4a]/bestaudio',
-        '-o', temp,
-        video.url
-      ])
+
+      // FALLBACK MULTIPLO
+      const formats = [
+        'bestaudio[ext=m4a]',
+        'bestaudio[ext=webm]',
+        'bestaudio',
+        'worstaudio'
+      ]
+
+      let downloaded = false
+
+      for (let f of formats) {
+        try {
+          await execFilePromise('/usr/local/bin/yt-dlp', [
+            '--cookies', 'cookies.txt',
+            '--extractor-args', 'youtube:player_client=android',
+            '--no-mtime',
+            '--ignore-errors',
+            '--no-warnings',
+            '--no-playlist',
+            '-f', f,
+            '-o', temp,
+            video.url
+          ])
+          downloaded = true
+          break
+        } catch (e) {
+          console.log("Formato fallito:", f)
+        }
+      }
+
+      if (!downloaded) throw new Error("Nessun formato audio disponibile")
 
       // Converti in mp3
       await execPromise(
